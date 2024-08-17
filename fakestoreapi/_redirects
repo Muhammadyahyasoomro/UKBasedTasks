@@ -1,0 +1,7 @@
+# Redirects from what the browser requests to what we serve
+
+/home /
+/blog/my-post.php /blog/my-post
+/news /blog
+/cuties https://charming-capybara-12c634.netlify.app
+/authors/c%C3%A9line /authors/about-c%C3%A9line
