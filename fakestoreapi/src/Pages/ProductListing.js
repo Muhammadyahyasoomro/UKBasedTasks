@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import NavbarHome from '../Components/NavbarHome';
 import ItemCard from './components/ItemCard';
-import { Container, Row, Col, Dropdown, Button, Form, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+import ListCard from './components/ListCard';
+import { Container, Row, Col, Dropdown, Button, Form, ToggleButtonGroup, ToggleButton, Pagination } from 'react-bootstrap';
 import { useSearch } from "../context/SearchContext";
 import { useTheme } from '../context/ThemeContext';
-import { SortAlphaDown, SortAlphaUp, Filter, Grid, List } from 'react-bootstrap-icons'; // Icons for sorting and filtering
+import { SortAlphaDown, SortAlphaUp, Filter, Grid, List } from 'react-bootstrap-icons';
 
 export default function ProductListing() {
     const [itemList, setItemList] = useState([]);
@@ -16,11 +17,15 @@ export default function ProductListing() {
 
     // Filtering state
     const [categoryFilter, setCategoryFilter] = useState('');
-    const [priceRange, setPriceRange] = useState([0, 1000]); // Default price range
+    const [priceRange, setPriceRange] = useState([0, 1000]);
     const [inStockOnly, setInStockOnly] = useState(false);
 
     // View mode state
-    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+    const [viewMode, setViewMode] = useState('grid');
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
     useEffect(() => {
         fetch('https://fakestoreapi.com/products', { method: 'GET' })
@@ -77,6 +82,18 @@ export default function ProductListing() {
     // View Mode Handler
     const handleViewModeChange = (mode) => setViewMode(mode);
 
+    // Pagination Handlers
+    const totalPages = Math.ceil(searchedItems.length / itemsPerPage);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const paginatedItems = searchedItems.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
     return (
         <>
             <NavbarHome />
@@ -103,11 +120,19 @@ export default function ProductListing() {
 
                     {/* View Mode Toggle */}
                     <Col xs={12} md={4} className='mt-4 text-end'>
-                        <ToggleButtonGroup type="radio" name="viewMode" value={viewMode} onChange={handleViewModeChange}>
-                            <ToggleButton variant="outline-secondary" value="grid">
+                        <ToggleButtonGroup type="radio" name="viewMode" value={viewMode}>
+                            <ToggleButton 
+                                variant="outline-secondary" 
+                                value="grid" 
+                                onClick={() => handleViewModeChange('grid')}
+                            >
                                 <Grid /> Grid View
                             </ToggleButton>
-                            <ToggleButton variant="outline-secondary" value="list">
+                            <ToggleButton 
+                                variant="outline-secondary" 
+                                value="list" 
+                                onClick={() => handleViewModeChange('list')}
+                            >
                                 <List /> List View
                             </ToggleButton>
                         </ToggleButtonGroup>
@@ -160,9 +185,9 @@ export default function ProductListing() {
 
                 {/* Product Listing */}
                 <Row>
-                    {searchedItems.length > 0 ? (
+                    {paginatedItems.length > 0 ? (
                         viewMode === 'grid' ? (
-                            searchedItems.map((item) => (
+                            paginatedItems.map((item) => (
                                 <Col key={item.id} xs={12} sm={6} md={6} lg={3} className="mb-4 mt-4">
                                     <ItemCard
                                         id={item.id}
@@ -175,9 +200,9 @@ export default function ProductListing() {
                                 </Col>
                             ))
                         ) : (
-                            searchedItems.map((item) => (
+                            paginatedItems.map((item) => (
                                 <Col key={item.id} xs={12} className="mb-4 mt-4">
-                                    <ItemCard
+                                    <ListCard
                                         id={item.id}
                                         title={item.title}
                                         price={item.price}
@@ -191,6 +216,32 @@ export default function ProductListing() {
                     ) : (
                         <p style={{ color: theme === "light" ? "black" : "white" }}>No products found.</p>
                     )}
+                </Row>
+
+                {/* Pagination Controls */}
+                <Row className="mt-4">
+                    <Col></Col>
+                    <Col></Col>
+                    <Col >
+                        <Pagination>
+                            <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
+                            <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+                            {[...Array(totalPages)].map((_, index) => (
+                                <Pagination.Item
+                                    key={index + 1}
+                                    active={index + 1 === currentPage}
+                                    onClick={() => handlePageChange(index + 1)}
+                                >
+                                    {index + 1}
+                                </Pagination.Item>
+                            ))}
+                            <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                            <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
+                        </Pagination>
+                    </Col>
+                    <Col></Col>
+                    <Col></Col>
+
                 </Row>
             </Container>
         </>
