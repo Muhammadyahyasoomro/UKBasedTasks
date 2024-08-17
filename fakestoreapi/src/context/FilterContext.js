@@ -14,10 +14,10 @@ export const FilterProvider = ({ children }) => {
   
 
   return (
-    <SearchContext.Provider value={{ search,setSearch}}>
+    <FilterContext.Provider value={{ minPrice,setAvailablity,setMinPrice,setMaxPrice,maxPrice,category,setCategory,availablity}}>
       {children}
-    </SearchContext.Provider>
+    </FilterContext.Provider>
   );
 };
 
-export const useSearch = () => useContext(SearchContext);
+export const useFilter = () => useContext(FilterContext);

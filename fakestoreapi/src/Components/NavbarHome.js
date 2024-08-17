@@ -17,7 +17,7 @@ export default function NavbarHome() {
     const lightbulbColor = theme === 'light' ? 'black' : 'yellow';
 
     return (
-        <nav className={`navbar navbar-expand-lg ${navbarClass}` }>
+        <nav className={`navbar navbar-expand-lg ${navbarClass}`  } style={{position:"fixed" ,zIndex:"1000",width:"100%",top:0}} >
             <div className="container-fluid">
                 <a className="navbar-brand" href="#">FakeStoreApi</a>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
