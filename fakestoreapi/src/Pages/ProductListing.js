@@ -33,7 +33,7 @@ export default function ProductListing() {
 
   // Filtering state
   const [categoryFilter, setCategoryFilter] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 300]);
   const [inStockOnly, setInStockOnly] = useState(false);
 
   // View mode state
@@ -225,7 +225,7 @@ export default function ProductListing() {
                 }}
                 type="range"
                 min="0"
-                max="1000"
+                max="300"
                 value={priceRange[1]}
                 onChange={(e) =>
                   handlePriceRangeChange(0, parseInt(e.target.value))
